@@ -1,67 +1,64 @@
-import React from 'react';
+import React, { FormEvent, useState } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 import { Form, Repositories, Title } from './styles';
 import logo from '../../assets/logo.svg';
+import api from '../../service/api';
+
+interface Repository {
+  id?: number;
+  name?: string;
+  full_name: string;
+  description: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+    repos_url?: string;
+  };
+}
 
 const Dashboard: React.FC = () => {
+  const [repositories, setRepositories] = useState<Repository[]>([]);
+  const [newRepo, setNewRepo] = useState('');
+
+  async function handleAddRepository(
+    event: FormEvent<HTMLInputElement>,
+  ): Promise<void> {
+    event.preventDefault();
+    const res = await api.get<Repository>(`repos/${newRepo}`);
+    const repository = res.data;
+
+    setRepositories([...repositories, repository]);
+    setNewRepo('');
+  }
+
   return (
     <>
       <img src={logo} alt="Explorer GitHub" />
       <Title>Explore repositories on GitHub</Title>
 
-      <Form>
-        <input type="text" placeholder="Type it the name of repository" />
+      <Form onSubmit={handleAddRepository}>
+        <input
+          placeholder="Type it the name of repository"
+          type="text"
+          value={newRepo}
+          onChange={(e) => setNewRepo(e.target.value)}
+        />
+
         <button type="submit">Search</button>
       </Form>
 
       <Repositories>
-        <a href="teste">
-          <img
-            src="https://avatars.githubusercontent.com/u/21340862?s=460&u=aaf7389aa08bf4412aea24f1dc08a9d6de4e74ce&v=4"
-            alt="Profile"
-          />
-          <div>
-            <strong>threejs-examples</strong>
-            <p>
-              A litle projects with some example threejs for study. Focused on
-              panorama and virtual tour examples.
-            </p>
-          </div>
+        {repositories.map((repo) => (
+          <a key={repo.id} href="teste">
+            <img src={repo.owner.avatar_url} alt={repo.owner.login} />
+            <div>
+              <strong>{repo.full_name}</strong>
+              <p>{repo.description}</p>
+            </div>
 
-          <FiChevronRight size={20} />
-        </a>
-
-        <a href="teste">
-          <img
-            src="https://avatars.githubusercontent.com/u/21340862?s=460&u=aaf7389aa08bf4412aea24f1dc08a9d6de4e74ce&v=4"
-            alt="Profile"
-          />
-          <div>
-            <strong>threejs-examples</strong>
-            <p>
-              A litle projects with some example threejs for study. Focused on
-              panorama and virtual tour examples.
-            </p>
-          </div>
-
-          <FiChevronRight size={20} />
-        </a>
-
-        <a href="teste">
-          <img
-            src="https://avatars.githubusercontent.com/u/21340862?s=460&u=aaf7389aa08bf4412aea24f1dc08a9d6de4e74ce&v=4"
-            alt="Profile"
-          />
-          <div>
-            <strong>threejs-examples</strong>
-            <p>
-              A litle projects with some example threejs for study. Focused on
-              panorama and virtual tour examples.
-            </p>
-          </div>
-
-          <FiChevronRight size={20} />
-        </a>
+            <FiChevronRight size={20} />
+          </a>
+        ))}
       </Repositories>
     </>
   );
