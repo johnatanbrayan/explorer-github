@@ -3,18 +3,7 @@ import { FiChevronRight } from 'react-icons/fi';
 import { Form, Repositories, Title } from './styles';
 import logo from '../../assets/logo.svg';
 import api from '../../service/api';
-
-interface Repository {
-  id?: number;
-  name?: string;
-  full_name: string;
-  description: string;
-  owner: {
-    login: string;
-    avatar_url: string;
-    repos_url?: string;
-  };
-}
+import { Repository } from '../../model/repository.model';
 
 const Dashboard: React.FC = () => {
   const [repositories, setRepositories] = useState<Repository[]>([]);
