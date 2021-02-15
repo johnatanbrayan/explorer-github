@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { Error, Form, Repositories, Title } from './styles';
 import logo from '../../assets/logo.svg';
 import api from '../../service/api';
-import { Repository } from '../../model/repository.model';
+import { RepositoryModel } from '../../model/repository.model';
 
 const Dashboard: React.FC = () => {
-  const [repositories, setRepositories] = useState<Repository[]>(() => {
+  const [repositories, setRepositories] = useState<RepositoryModel[]>(() => {
     const storagedRepositories = localStorage.getItem(
       '@ExplorerGitHub:repositories',
     );
@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      const res = await api.get<Repository>(`repos/${newRepo}`);
+      const res = await api.get<RepositoryModel>(`repos/${newRepo}`);
       const repository = res.data;
 
       setRepositories([...repositories, repository]);

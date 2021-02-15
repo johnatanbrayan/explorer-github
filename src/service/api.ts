@@ -4,6 +4,8 @@ import axios from 'axios';
  * --Interesting url of API GitHub
  * "repository_url": "https://api.github.com/repos/{owner}/{repo}"
  * "repository_search_url": "https://api.github.com/search/repositories?q={query}{&page,per_page,sort,order}",
+ * "issue_search_url": "https://api.github.com/search/issues?q={query}{&page,per_page,sort,order}",
+ * "issues_url": "https://api.github.com/issues",
  * "user_url": "https://api.github.com/users/{user}",
  * "user_repositories_url": "https://api.github.com/users/{user}/repos{?type,page,per_page,sort}",
  * "user_search_url": "https://api.github.com/search/users?q={query}{&page,per_page,sort,order}"

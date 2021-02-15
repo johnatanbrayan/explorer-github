@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { Header, RepoInfo, Issues } from './styles';
 
 import logo from '../../assets/logo.svg';
+import api from '../../service/api';
+import { RepositoryModel } from '../../model/repository.model';
+import { IssueModel } from '../../model/issue.model';
 
 const Repository: React.FC = () => {
   const { params } = useRouteMatch();
+  const [repository, setRepository] = useState<RepositoryModel | null>(null);
+  const [issues, setIssues] = useState<IssueModel[]>([]);
+
+  useEffect(() => {
+    api
+      .get(`/repos/${params.repository}`)
+      .then((res) => setRepository(res.data));
+    api
+      .get(`/repos/${params.repository}/issues`)
+      .then((res) => setIssues(res.data));
+  }, [params.repository]);
 
   return (
     <>
@@ -21,49 +35,48 @@ const Repository: React.FC = () => {
       <RepoInfo>
         <header>
           <img
-            src="https://avatars.githubusercontent.com/u/21340862?s=460&u=aaf7389aa08bf4412aea24f1dc08a9d6de4e74ce&v=4"
-            alt="johnatanbrayan1@gmail.com"
+            src={repository?.owner.avatar_url}
+            alt={repository?.owner.login}
           />
           <div>
-            <strong>asdfasdfasdgasdf/asdfwlaslkjssd</strong>
-            <p>adsfasdfasdfagasdf</p>
+            <strong>{repository?.full_name}</strong>
+            <p>{repository?.description}</p>
           </div>
         </header>
 
         <ul>
           <li>
-            <strong>1808</strong>
+            <strong>{repository?.stargazers_count}</strong>
             <span>Stars</span>
           </li>
           <li>
-            <strong>48</strong>
+            <strong>{repository?.forks_count}</strong>
             <span>Forks</span>
           </li>
           <li>
-            <strong>67</strong>
+            <strong>{repository?.open_issues_count}</strong>
             <span>Issues Abertas</span>
           </li>
         </ul>
       </RepoInfo>
 
       <Issues>
-        <Link to="/">
-          <div>
-            <strong>asdfawffwfwfwff</strong>
-            <p>asdfasgqgqg</p>
-          </div>
+        {issues &&
+          issues.map((issue) => (
+            <a
+              key={issue.id}
+              href={issue.html_url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div>
+                <strong>{issue.title}</strong>
+                <p>{issue.user.login}</p>
+              </div>
 
-          <FiChevronRight size={20} />
-        </Link>
-
-        <Link to="/">
-          <div>
-            <strong>asdfawffwfwfwff</strong>
-            <p>asdfasgqgqg</p>
-          </div>
-
-          <FiChevronRight size={20} />
-        </Link>
+              <FiChevronRight size={20} />
+            </a>
+          ))}
       </Issues>
     </>
   );
